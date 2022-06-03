@@ -5,7 +5,7 @@ import random
 import os
 import requests
 
-os.system('clear')
+#os.system('clear')
 
 global drawnumbers
 drawnumbers = []
@@ -14,13 +14,14 @@ global data
 
 global lotto
 
-pr=""
+pr = ""
 
-print("""1 = Lotto 6/49
-2 = LottoMax
-3 = Grande Vie
-4 = Tout Ou Rien""")
-print()
+#print("""1 = Lotto 6/49
+#2 = LottoMax
+#3 = Grande Vie
+#4 = Tout Ou Rien""")
+#print()
+
 
 def choose(i):
     switcher = {
@@ -31,52 +32,63 @@ def choose(i):
     }
     return switcher.get(i, 'Invalid Number')
 
+
 app = Flask('app')
+
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    #errors = []
+    errors = []
     if request.method == "POST":
         if request.form.get("Submit"):
-          #try:
-              choice = request.form['choice']
-              global lotto
-              lotto=int(choice)
-              jsonfile = choose(lotto)
-              url = "https://richard-perreault.com/Documents/" + jsonfile
-              response = requests.get(url)
-              global data
-              data = json.loads(response.text)
-              global count
-              count = len(data)
-              #Lotto 6/49 Drawings
-              global drawnumbers
-              global pr
-              if lotto == 1:
-                  lottonumbers = LottoDrawings(7, 49, -5, drawnumbers)
-                  pr="<p>The winning 6/49 numbers are " + str(lottonumbers.drawnumbers) + "in a total of " + str(count) +" drawings</p>"
-              
-              #LottoMax Drawings
-              if lotto == 2:
-                  lottonumbers = LottoDrawings(8, 50, -6, drawnumbers)
-                  pr="<p>The LottoMax winning numbers are " + str(lottonumbers.drawnumbers) + " in a total of " + str(count) + " drawings</p>"
-                
-              #Grande Vie Drawings
-              if lotto == 3:
-                  lottonumbers = LottoDrawings(6, 49, -4, drawnumbers)
-                  pr="<p>The winning Grande Vie numbers are " + str(lottonumbers.drawnumbers) + " in a total of " + str(count) + " drawings</p>"
-              
-              #Tout ou Rien Drawings
-              if lotto == 4:
-                  lottonumbers = LottoDrawings(13, 24, -11, drawnumbers)
-                  pr="<p>The winning Tout ou Rien numbers are " + str(lottonumbers.drawnumbers) + " in a total of " + str(count) + " drawings</p>"
-         # except:
-         #     errors.append(
-         #         "Unable to get URL. Please make sure it's valid and try again."
-         #     )
-         #     print(errors)0
-              print(pr)       
-    return render_template('index.html',result=pr,title="Lotto Drawings")
+            try:
+                choice = request.form['choice']
+                global lotto
+                lotto = int(choice)
+                jsonfile = choose(lotto)
+                url = "https://richard-perreault.com/Documents/" + jsonfile
+                response = requests.get(url)
+                global data
+                data = json.loads(response.text)
+                global count
+                count = len(data)
+                #Lotto 6/49 Drawings
+                global drawnumbers
+                global pr
+                if lotto == 1:
+                    lottonumbers = LottoDrawings(7, 49, -5, drawnumbers)
+                    pr = "<p>The winning 6/49 numbers are " + str(
+                        lottonumbers.drawnumbers) + "in a total of " + str(
+                            count) + " drawings</p>"
+
+                #Lotto Max Drawings
+                if lotto == 2:
+                    lottonumbers = LottoDrawings(8, 50, -6, drawnumbers)
+                    pr = "<p>The Lotto Max winning numbers are " + str(
+                        lottonumbers.drawnumbers) + " in a total of " + str(
+                            count) + " drawings</p>"
+
+                #Grande Vie Drawings
+                if lotto == 3:
+                    lottonumbers = LottoDrawings(6, 49, -4, drawnumbers)
+                    pr = "<p>The winning Grande Vie numbers are " + str(
+                        lottonumbers.drawnumbers) + " in a total of " + str(
+                            count) + " drawings</p>"
+
+                #Tout ou rien Drawings
+                if lotto == 4:
+                    lottonumbers = LottoDrawings(13, 24, -11, drawnumbers)
+                    pr = "<p>The winning Tout ou rien numbers are " + str(
+                        lottonumbers.drawnumbers) + " in a total of " + str(
+                            count) + " drawings</p>"
+            except:
+                errors.append(
+                    "Unable to get URL. Please make sure it's valid and try again."
+                )
+                print(errors)
+    print(pr)
+    return render_template('index.html', result=pr, title="Lotto Drawings")
+
 
 class LottoDrawings():
     def __init__(self, rangenum, drawingnum, same, drawnumbers):
@@ -225,6 +237,7 @@ class LottoDrawings():
                             else:
                                 PickNumbers = False
 
+
 app.run(host='0.0.0.0')
-
-
+#if __name__ == "__main__":
+#    app.run()
