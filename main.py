@@ -90,7 +90,9 @@ def index():
                 #errors.append(
                 #    "Unable to get URL. Please make sure it's valid and try again."
                 #)
-                print(e.args[0])
+                print(f"An unexpected error occurred: {e}")
+                error_code = e.args[0] # If the error has additional arguments
+                print(f"Error code: {error_code}")
     print(pr)
     return render_template('index.html', result=pr, title="Lotto Drawings")
 
