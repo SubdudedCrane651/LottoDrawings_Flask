@@ -2,7 +2,6 @@
 from flask import Flask, request, render_template, Response, redirect
 import json
 import random
-import os
 import requests
 
 #os.system('clear')
@@ -39,14 +38,20 @@ app = Flask('app')
 @app.route('/', methods=["GET", "POST"])
 def index():
     errors = []
-    if request.method == "POST":
-        if request.form.get("Submit"):
-            try:
+    global lotto
+    lottochoice=request.args.get('lotto')
+    if str(lottochoice) != "None":
+           lotto = int(lottochoice)
+    else:   
+        if request.method == "POST":
+            if request.form.get("Submit"):
                 choice = request.form['choice']
-                global lotto
                 lotto = int(choice)
+    print(lotto)                
+    try:
                 jsonfile = choose(lotto)
                 url = "https://richard-perreault.com/Documents/" + jsonfile
+                print(url)
                 response = requests.get(url)
                 global data
                 data = json.loads(response.text)
@@ -81,11 +86,11 @@ def index():
                     pr = "<p>The winning Tout ou rien numbers are " + str(
                         lottonumbers.drawnumbers) + " in a total of " + str(
                             count) + " drawings</p>"
-            except:
-                errors.append(
-                    "Unable to get URL. Please make sure it's valid and try again."
-                )
-                print(errors)
+    except Exception as e:
+                #errors.append(
+                #    "Unable to get URL. Please make sure it's valid and try again."
+                #)
+                print(e.args[0])
     print(pr)
     return render_template('index.html', result=pr, title="Lotto Drawings")
 
@@ -237,7 +242,6 @@ class LottoDrawings():
                             else:
                                 PickNumbers = False
 
-
 app.run(host='0.0.0.0')
 #if __name__ == "__main__":
-#    app.run()
+#    app.run(debug=True)
